@@ -18,3 +18,11 @@ part 2:
   be symmetrical down the middle of the map, which it wasn't)
 - i had to rename my input method (for reading input.txt), and I'll probably
   keep that rename since I never edit that line anyway
+
+other solutions:
+
+- apparently the first frame where the robots are all in unique positions is the
+  tree frame. this seems like a lucky hunch for those that tried it
+- the danger score from part 1 is minimized when the tree forms. in my input,
+  the tree is almost entirely in the 4th quadrant. this seems more like it was
+  "intended" since it builds on part 1 directly.
