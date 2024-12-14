@@ -40,6 +40,14 @@ class Vec:
     r: int
     c: int
 
+    # x and y alias to r and c
+    @property
+    def x(self):
+        return self.r
+    @property
+    def y(self):
+        return self.c
+
     def __add__(self, other):
         return Vec(self.r+other.r, self.c+other.c)
 
