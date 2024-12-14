@@ -1,4 +1,4 @@
 from util import *
 
-s = input()
-lines = s.split()
+s = inputtxt()
+lines = s.split('\n')

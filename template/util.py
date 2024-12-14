@@ -3,7 +3,12 @@ import re
 from itertools import pairwise
 from collections import Counter, defaultdict, deque
 import subprocess
-from functools import cache
+from functools import cache, reduce
+import operator
+from dataclasses import dataclass
+
+# sim. to sum, but for mult.
+mul = lambda ls: reduce(operator.mul, ls, 1)
 
 def dd():
     return defaultdict(lambda: None)
@@ -16,7 +21,7 @@ def printc(x):
     print(s)
     subprocess.run(["xclip", "-i", "-sel", "c"], input=str.encode(s))
 
-def input():
+def inputtxt():
     fname = "input.txt"
     if len(sys.argv) > 1:
         fname = sys.argv[1]
@@ -29,6 +34,30 @@ def ctrue(l):
         if i:
             total += 1
     return total
+
+@dataclass(eq=True, frozen=True)
+class Vec:
+    r: int
+    c: int
+
+    def __add__(self, other):
+        return Vec(self.r+other.r, self.c+other.c)
+
+    def __mul__(self, n):
+        return Vec(self.r*n, self.c*n)
+
+    def oob(self, m):
+        return self.r >= 0 and self.c >= 0 and self.r < len(m) and self.c < len(m[x])
+
+Cardinals = [Vec(1,0), Vec(0,1), Vec(-1,0), Vec(0,-1)]
+CardinalsX = [Vec(1,1), Vec(-1,1), Vec(-1,-1), Vec(1,-1)]
+Cardinals8 = [Vec(1,0), Vec(1,1),
+              Vec(0,1), Vec(-1,1),
+              Vec(-1,0), Vec(-1,-1),
+              Vec(0,-1), Vec(1,-1)]
+
+def rangedirs(v: Vec, dirs: list[Vec]):
+    return [v+d for d in dirs]
 
 class DiGraph:
     def __init__(self):
