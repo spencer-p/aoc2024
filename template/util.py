@@ -51,18 +51,34 @@ class Vec:
     def __add__(self, other):
         return Vec(self.r+other.r, self.c+other.c)
 
+    def __sub__(self, other):
+        return Vec(self.r-other.r, self.c-other.c)
+
     def __mul__(self, n):
         return Vec(self.r*n, self.c*n)
 
     def oob(self, m):
         return self.r >= 0 and self.c >= 0 and self.r < len(m) and self.c < len(m[x])
 
-Cardinals = [Vec(1,0), Vec(0,1), Vec(-1,0), Vec(0,-1)]
-CardinalsX = [Vec(1,1), Vec(-1,1), Vec(-1,-1), Vec(1,-1)]
-Cardinals8 = [Vec(1,0), Vec(1,1),
-              Vec(0,1), Vec(-1,1),
-              Vec(-1,0), Vec(-1,-1),
-              Vec(0,-1), Vec(1,-1)]
+# Cardinal directions as up/down left/right and NSEW.
+East  = Right = Vec(0,1)
+South = Down  = Vec(1,0)
+North = Up    = Vec(-1,0)
+West  = Left  = Vec(0,-1)
+Cardinals = [Right, Down, Left, Up]
+
+# The four intercardinal directions.
+Southeast = South+East
+SouthWest = South+West
+Northwest = North+West
+Northeast = North+East
+Intercardinals = [Southeast, Southwest, Northwest, Northeast]
+
+# The full eight point compass.
+Compass8 = [East,  Southeast,
+            South, Southwest,
+            West,  Northwest,
+            North, Northeast]
 
 def rangedirs(v: Vec, dirs: list[Vec]):
     return [v+d for d in dirs]
