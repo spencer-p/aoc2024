@@ -69,7 +69,7 @@ Cardinals = [Right, Down, Left, Up]
 
 # The four intercardinal directions.
 Southeast = South+East
-SouthWest = South+West
+Southwest = South+West
 Northwest = North+West
 Northeast = North+East
 Intercardinals = [Southeast, Southwest, Northwest, Northeast]
