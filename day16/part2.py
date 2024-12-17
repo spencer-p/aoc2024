@@ -15,9 +15,6 @@ def turncost(d1, d2):
 def solve(m, start, d=East):
     table = defaultdict(lambda: 1e12)
     table[(start, East)] = 0
-    table[(start, North)] = 1000
-    table[(start, South)] = 1000
-    table[(start, West)] = 2000
 
     q = [(0, start,d)]
     seen = set()
