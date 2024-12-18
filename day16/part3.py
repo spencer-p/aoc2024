@@ -19,17 +19,19 @@ def solve(m, start, d=East):
     return Dijkstra((start,d), None, succ, cost)
 
 
-def reversewalk(cur, facing, table):
-    result = set([cur])
-    curcost = table[(cur,facing)]
-    for d in Cardinals:
-        cost = turncost(d, facing)
-        step = cur+facing*-1
-        if (step,d) in table and table[(step,d)] == curcost-cost:
-            result |= reversewalk(step, d, table)
-    return result
+def reversewalk(start, end, table):
+    def succ(n):
+        cur,facing = n[0], n[1]
+        curcost = table[n]
+        cds = [ (cur+facing*-1,d) for d in Cardinals ]
+        cds = [ c for c in cds if c in table and table[c] ==
+               curcost-turncost(c[1],facing) ]
+        return cds
+
+    return DFS_all(start, end, succ)
 
 table = solve(m, start)
 sol = min([ table[(end,d)] for d in Cardinals if (end,d) in table])
 printc(sol)
-printc(len(reversewalk(end, North, table)))
+paths = reversewalk((end,North), (start,East), table)
+printc(len(set([n[0] for path in paths for n in path])))

@@ -168,7 +168,7 @@ def DFS_all(start, end, succ, seen=None):
     seen.add(start)
     paths = []
     for t in succ(start):
-        results = DFS(t, end, succ, seen=seen.copy())
+        results = DFS_all(t, end, succ, seen=seen.copy())
         if len(results) > 0:
             paths.extend([ [start] + r for r in results ])
     return paths
