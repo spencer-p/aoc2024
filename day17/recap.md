@@ -25,3 +25,15 @@ must be different, and the test uses the full A value to verify.
 i think this is what i had in mind in the beginning, but couldn't grasp how i'd
 be able to run the whole program in reverse. turns out the only part i needed to
 reverse was the shift right before the jump.
+
+
+part 3:
+
+I rewrote the vm with a match statement, nice and succinct.
+I also wrote my search function as a proper backtracking recursive search. My
+original solution could only "backtracking" by incrementing A upwards until
+previous values (bits above the 3 lowest) got tampered with, which could be slow
+for more complex cases.
+
+I think this solution could still be slow for complex cases since there are
+possibly 8^n solutions. The input is well crafted to have low branchiness.
