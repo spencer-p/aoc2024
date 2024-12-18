@@ -6,6 +6,9 @@ import subprocess
 from functools import cache, reduce
 import operator
 from dataclasses import dataclass
+from heapq import heappush, heappop
+
+sys.setrecursionlimit(1000000000) # 1e9.
 
 # sim. to sum, but for mult.
 mul = lambda ls: reduce(operator.mul, ls, 1)
@@ -35,7 +38,17 @@ def ctrue(l):
             total += 1
     return total
 
-@dataclass(eq=True, frozen=True)
+def bisect(f, l, h):
+    while l <= h:
+        m = (l+h)//2
+        t = f(m)
+        if t:
+            l = m + 1
+        else:
+            h = m - 1
+    return l
+
+@dataclass(eq=True, frozen=True, order=True)
 class Vec:
     r: int
     c: int
@@ -57,12 +70,14 @@ class Vec:
     def __mul__(self, n):
         return Vec(self.r*n, self.c*n)
 
-    def oob(self, m):
-        return not (self.r >= 0 and self.c >= 0 and self.r < len(m) and self.c <
-                    len(m[self.r]))
-
     def of(self, m):
         return m[self.r][self.c]
+
+    def oob(self, m):
+        return not (self.r >= 0 and
+                    self.c >= 0 and
+                    self.r < len(m) and
+                    self.c < len(m[self.r]))
 
 # Cardinal directions as up/down left/right and NSEW.
 East  = Right = Vec(0,1)
@@ -86,6 +101,77 @@ Compass8 = [East,  Southeast,
 
 def rangedirs(v: Vec, dirs: list[Vec]):
     return [v+d for d in dirs]
+
+# BFS finds the cost to get from start to end (or all nodes if end is None) and
+# returns a dictionary of coordinates to the cost to get there.
+# succ should return the "successors" of a given node, or an empty list if none.
+def BFS(start, end, succ) -> dict:
+    seen = set()
+    costs = defaultdict(lambda: None)
+    costs[start] = 0
+    q = deque([start])
+    while len(q) > 0:
+        cur = q.pop()
+        if cur in seen: continue
+        seen.add(cur)
+        if end is not None and cur == end:
+            return costs
+        for t in succ(cur):
+            costs[t] = 1 + costs[cur]
+            q.appendleft(t)
+    return costs
+
+# BFS_path returns a path from the result of BFS.
+def BFS_path(start, end, succ, costs):
+    def newsucc(n):
+        candidates = succ(n)
+        cost = costs[n]
+        candidates = [ c for c in candidates if costs[c] == cost+1 ]
+        return candidates
+    return DFS(start, end, newsucc)
+
+# Dijkstra is like BFS with the addition of the cost oracle.
+def Dijkstra(start, end, succ, cost) -> dict:
+    seen = set()
+    costs = {start: 0}
+    q = [(0,start)]
+    while len(q) > 0:
+        _, cur = heappop(q)
+        if cur in seen: continue
+        seen.add(cur)
+        if end is not None and cur == end:
+            return costs
+        for t in succ(cur):
+            edge = cost(cur, t)
+            if t in costs:
+                costs[t] = min(costs[t], costs[cur] + edge)
+            else:
+                costs[t] = costs[cur] + edge
+            heappush(q, (costs[t], t))
+    return costs
+
+# DFS finds a path from start to end.
+def DFS(start, end, succ, seen=None):
+    if seen is None: seen = set()
+    if start == end: return [end]
+    seen.add(start)
+    for t in succ(start):
+        result = DFS(t, end, succ, seen=seen)
+        if result is not None:
+            return [start]+result
+    return None
+
+# DFS_all finds all possible paths from start to end.
+def DFS_all(start, end, succ, seen=None):
+    if seen is None: seen = set()
+    if start == end: return [[end]]
+    seen.add(start)
+    paths = []
+    for t in succ(start):
+        results = DFS(t, end, succ, seen=seen.copy())
+        if len(results) > 0:
+            paths.extend([ [start] + r for r in results ])
+    return paths
 
 class DiGraph:
     def __init__(self):
