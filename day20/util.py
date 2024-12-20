@@ -1,6 +1,6 @@
 import sys
 import re
-from itertools import pairwise
+from itertools import pairwise, combinations
 from collections import Counter, defaultdict, deque
 import subprocess
 from functools import cache, reduce

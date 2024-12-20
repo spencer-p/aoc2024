@@ -19,22 +19,20 @@ def DFS(m, start, end, depth=0, cheatstart=None, seen=None):
     global costs, best
     if cheatstart is not None and start in costs:
         # then the solution is directly computable
-        return [best-(costs[start]-depth)]
+        return 1 if best-(costs[start]-depth) <= best-100 else 0
 
     if seen is None: seen = set()
-    if start == end: return [depth]
-    if (start,cheatstart) in seen:
-        return []
+    if start == end: return 1 if depth <= best-100 else 0
     seen.add(( start, cheatstart ))
-    r = []
+    r = 0
     for t in rangedirs(start, Cardinals):
         if t.oob(m): continue
         if (t,cheatstart) in seen: continue
         if t.of(m) != '#':
-            r.extend(DFS(m, t, end, depth+1, cheatstart=cheatstart, seen=seen))
+            r += DFS(m, t, end, depth+1, cheatstart=cheatstart, seen=seen)
     if cheatstart is None:
         for t in cheatspots(m, start):
-            r.extend(DFS(m, t, end, depth+(start-t).piecelen(), cheatstart=start, seen=seen))
+            r += DFS(m, t, end, depth+(start-t).piecelen(), cheatstart=start, seen=seen)
     return r
 
 def cheatspots(m, v):
@@ -50,5 +48,4 @@ def cheatspots(m, v):
 
 costs = bestnocheat(m,S,E)
 best = costs[E]
-paths = DFS(m, S, E)
-printc(ctrue(list(map(lambda x: best-x >= 100, paths))))
+printc(DFS(m, S, E))
