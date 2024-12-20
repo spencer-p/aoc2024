@@ -13,8 +13,7 @@ def bestnocheat(m,start,end):
     def succ(n):
         return [c for c in rangedirs(n, Cardinals) if not c.oob(m) and c.of(m)
                 != '#']
-    costs = BFS(start,end,succ)
-    return costs
+    return BFS(start,end,succ)
 
 def DFS(m, start, end, depth=0, cheatstart=None, seen=None):
     global costs, best
@@ -31,29 +30,25 @@ def DFS(m, start, end, depth=0, cheatstart=None, seen=None):
     for t in rangedirs(start, Cardinals):
         if t.oob(m): continue
         if (t,cheatstart) in seen: continue
-
-        if t.of(m) == '#':
-            if cheatstart is None:
-                r.extend(DFS(m, t, end, depth+1, cheatstart=start, seen=seen))
-        else:
+        if t.of(m) != '#':
             r.extend(DFS(m, t, end, depth+1, cheatstart=cheatstart, seen=seen))
+    if cheatstart is None:
+        for t in cheatspots(m, start):
+            r.extend(DFS(m, t, end, depth+(start-t).piecelen(), cheatstart=start, seen=seen))
     return r
 
 def cheatspots(m, v):
     result = []
-    for r in range(-21, 21):
-        for c in range(-21+r, 21-r):
-            diff = Vec(r,c)
-            cd = v+diff
+    for r in range(-20, 21):
+        for c in range(-20, 21):
+            if abs(r)+abs(c) > 20:
+                continue
+            cd = v+Vec(r,c)
             if not cd.oob(m) and cd.of(m) != '#':
                 result.append(cd)
     return result
 
-print(cheatspots(m, Vec(0,0)))
-
 costs = bestnocheat(m,S,E)
 best = costs[E]
-print("best is", best)
 paths = DFS(m, S, E)
-#print(list(map(lambda x: best-x > 0, paths)))
 printc(ctrue(list(map(lambda x: best-x >= 100, paths))))
