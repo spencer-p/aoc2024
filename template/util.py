@@ -1,14 +1,15 @@
 import sys
 import re
-from itertools import pairwise
+from itertools import pairwise, combinations
 from collections import Counter, defaultdict, deque
 import subprocess
 from functools import cache, reduce
 import operator
 from dataclasses import dataclass
 from heapq import heappush, heappop
+import math
 
-sys.setrecursionlimit(1000000000) # 1e9.
+sys.setrecursionlimit(1000000)
 
 # sim. to sum, but for mult.
 mul = lambda ls: reduce(operator.mul, ls, 1)
@@ -79,6 +80,12 @@ class Vec:
                     self.r < len(m) and
                     self.c < len(m[self.r]))
 
+    def mag(self):
+        return math.sqrt(self.r**2 + self.c**2)
+
+    def manhattan(self):
+        return abs(self.r)+abs(self.c)
+
 # Cardinal directions as up/down left/right and NSEW.
 East  = Right = Vec(0,1)
 South = Down  = Vec(1,0)
@@ -112,11 +119,11 @@ def BFS(start, end, succ) -> dict:
     q = deque([start])
     while len(q) > 0:
         cur = q.pop()
-        if cur in seen: continue
         seen.add(cur)
         if end is not None and cur == end:
             return costs
         for t in succ(cur):
+            if t in seen: continue
             costs[t] = 1 + costs[cur]
             q.appendleft(t)
     return costs
