@@ -3,7 +3,7 @@ import re
 from itertools import pairwise, combinations
 from collections import Counter, defaultdict, deque
 import subprocess
-from functools import cache, reduce
+from functools import cache, lru_cache, reduce
 import operator
 from dataclasses import dataclass
 from heapq import heappush, heappop
