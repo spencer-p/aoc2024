@@ -89,7 +89,7 @@ def findsequence(wantseq, start=None, robot=False):
 def minseq(wantseq, depth):
     if len(wantseq) == 0: return 0
     if wantseq == 'A': return 1
-    if depth==0: return len(min(findsequence(wantseq, robot=True), key=len))
+    if depth==0: return len(wantseq)
     seqs = findsequence(wantseq, robot=True)
     sol = None
     for seq in seqs:
@@ -103,7 +103,7 @@ def minseq(wantseq, depth):
 
 def solve1(code):
     l1 = findsequence(code, robot=False)
-    return min([minseq(code,24) for code in l1])
+    return min([minseq(code,25) for code in l1])
 
 def solve2(code):
     l = solve1(code)
